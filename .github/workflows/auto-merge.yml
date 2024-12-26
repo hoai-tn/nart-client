@@ -15,7 +15,7 @@ jobs:
             git config user.email "hoai.nart.dev@gmail.com"
       - name: Attempt to merge release branch into main
         run: |
-          git checkout main
+          git checkout origin main
           git pull origin main
 
           # Attempt to merge the release branch into main
