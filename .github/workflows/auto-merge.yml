@@ -3,7 +3,7 @@ name: AutoMerge
 on:
   push:
     branches:
-      - release/* # Trigger on pushes to release branches
+      - release/*
 
 jobs:
   auto-merge:
