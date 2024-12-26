@@ -10,7 +10,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-            sparse-checkout: .
+            fetch-depth: 0
       - name: Setup Git
         run: |
           git config user.name "Hoai Tran"
