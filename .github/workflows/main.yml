@@ -23,6 +23,31 @@ jobs:
       #     run: npm run deploy
       - name: Notify
         run: echo "${{job.status}}"
+  auto-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Git
+        run: |
+          git config user.name "Hoai Tran"
+            git config user.email "hoai.nart.dev@gmail.com"
+      - name: Attempt to merge release branch into main
+        run: |
+          git checkout main
+          git pull origin main
+          if get merge --no-commit --no-ff ${{ github.ref }}; then
+            git commit -m "Merge branch ${{ github.ref }}"
+          else
+            echo "Merge conflicts detected. Please resolve them manually."
+            exit 1
+          fi
+      - name: Push change if merge was successful
+        if: success()
+        run: |
+          git push origin main
+          echo "${{ job.status }}"
+
 #   Explore-GitHub-Actions:
 #     runs-on: ubuntu-latest
 #     steps:
