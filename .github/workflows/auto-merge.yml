@@ -1,28 +1,45 @@
 name: AutoMerge
-'on':
+
+on:
   push:
     branches:
-      - release/*
+      - release/* # Trigger on pushes to release branches
+
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Setup Git
+        with:
+          fetch-depth: 0
+
+      - name: Setup Git (Optional)
+        # You can remove this step if you already have Git configured locally
         run: |
           git config user.name "Hoai Tran"
-            git config user.email "hoai.nart.dev@gmail.com"
-      - name: Attempt to merge release branch into main
+          git config user.email "hoai.nart.dev@gmail.com"
+
+      - name: Fetch updates (assuming remote is named 'origin')
+        run: |
+          git fetch --no-tags --prune --depth=1 origin
+
+      - name: Checkout main branch
         run: |
           git checkout main
-          git pull origin main
-          if get merge --no-commit --no-ff ${{ github.ref }}; then
+
+      - name: Attempt to merge release branch into main
+        run: |
+          git merge --no-commit --no-ff --allow-unrelated-histories ${{ github.ref }}
+
+          if [ $? -eq 0 ]; then
+            # Commit the merge if successful
             git commit -m "Merge branch ${{ github.ref }}"
           else
             echo "Merge conflicts detected. Please resolve them manually."
             exit 1
           fi
+
       - name: Push change if merge was successful
         if: success()
         run: |
