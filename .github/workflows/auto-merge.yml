@@ -17,7 +17,12 @@ jobs:
         run: |
           git checkout main
           git pull origin main
-          if get merge --no-commit --no-ff ${{ github.ref }}; then
+
+          # Attempt to merge the release branch into main
+          git merge --no-commit --no-ff ${{ github.ref }}
+
+          if [ $? -eq 0 ]; then
+            # Commit the merge if successful
             git commit -m "Merge branch ${{ github.ref }}"
           else
             echo "Merge conflicts detected. Please resolve them manually."
