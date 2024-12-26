@@ -1,6 +1,10 @@
 name: CI
 # run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: [push]
+on:
+  push:
+    branches:
+      - main
+      - develop
 jobs:
   ci:
     runs-on: ubuntu-latest
@@ -15,8 +19,8 @@ jobs:
         run: npm run test:unit
       - name: Build
         run: npm run build
-    #   - name: Deploy
-    #     run: npm run deploy
+      #   - name: Deploy
+      #     run: npm run deploy
       - name: Notify
         run: echo "${{job.status}}"
 #   Explore-GitHub-Actions:
