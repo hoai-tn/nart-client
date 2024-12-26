@@ -3,7 +3,7 @@ name: AutoMerge
 on:
   push:
     branches:
-      - release/* # Trigger on pushes to release branches
+      - release/*
 
 jobs:
   auto-merge:
@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Git (Optional)
         # You can remove this step if you already have Git configured locally
@@ -23,25 +21,30 @@ jobs:
       - name: Fetch updates (assuming remote is named 'origin')
         run: |
           git fetch --no-tags --prune --depth=1 origin
+          ls -la
+          echo github.ref: ${{ github.ref }}
 
       - name: Checkout main branch
         run: |
           git checkout main
 
-      - name: Attempt to merge release branch into main
+      - name: Attempt to merge release branch
         run: |
-          git merge --no-commit --no-ff --allow-unrelated-histories ${{ github.ref }}
+          git merge --no-ff --allow-unrelated-histories ${{ github.ref }} # Allow unrelated histories for initial merge
 
           if [ $? -eq 0 ]; then
-            # Commit the merge if successful
-            git commit -m "Merge branch ${{ github.ref }}"
+              git commit -m "Merge branch ${{ github.ref }}"
+              git push origin main
+              echo "Merge successful."
+          elif [[ $? -eq 1 ]]; then
+              echo "Merge conflicts detected. Please resolve them manually and commit the changes."
+              # The workflow will stop here, requiring manual intervention.
+              exit 1
+          elif [[ $? -eq 128 ]]; then
+              echo "Unrelated histories detected. Please check the branch history and branching points."
+              exit 1
           else
-            echo "Merge conflicts detected. Please resolve them manually."
-            exit 1
+              echo "An unexpected error occurred during the merge (status: $?)."
+              exit 1
           fi
-
-      - name: Push change if merge was successful
-        if: success()
-        run: |
-          git push origin main
           echo "${{ job.status }}"
