@@ -12,7 +12,13 @@ export default defineNuxtConfig({
     },
   ],
   devtools: { enabled: true },
-  modules: ['@nuxtjs/tailwindcss', 'shadcn-nuxt', '@nuxtjs/color-mode', '@nuxt/eslint'],
+  modules: [
+    '@nuxtjs/tailwindcss',
+    'shadcn-nuxt',
+    '@nuxtjs/color-mode',
+    '@nuxt/eslint',
+    '@nuxt/test-utils/module',
+  ],
   shadcn: {
     componentDir: 'app/components/ui',
   },

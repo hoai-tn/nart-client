@@ -1,1 +1,64 @@
+name: CI
+# run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on:
+  push:
+    branches:
+      - main
+      - develop
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm install
+      - name: Run linter
+        run: npm run lint
+      - name: Run unit tests
+        run: npm run test:unit
+      - name: Build
+        run: npm run build
+      #   - name: Deploy
+      #     run: npm run deploy
+      - name: Notify
+        run: echo "${{job.status}}"
+  auto-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Git
+        run: |
+          git config user.name "Hoai Tran"
+            git config user.email "hoai.nart.dev@gmail.com"
+      - name: Attempt to merge release branch into main
+        run: |
+          git checkout main
+          git pull origin main
+          if git merge --no-commit --no-ff ${{ github.ref }}; then
+            git commit -m "Merge branch ${{ github.ref }}"
+          else
+            echo "Merge conflicts detected. Please resolve them manually."
+            exit 1
+          fi
+      - name: Push change if merge was successful
+        if: success()
+        run: |
+          git push origin main
+          echo "${{ job.status }}"
 
+#   Explore-GitHub-Actions:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+#       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+#       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+#       - name: Check out repository code
+#         uses: actions/checkout@v4
+#       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+#       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+#       - name: List files in the repository
+#         run: |
+#           ls ${{ github.workspace }}
+#       - run: echo "🍏 This job's status is ${{ job.status }}."
