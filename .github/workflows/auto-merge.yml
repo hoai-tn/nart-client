@@ -30,7 +30,7 @@ jobs:
 
       - name: Attempt to merge release branch into main
         run: |
-          git merge --no-commit --no-ff ${{ github.ref }}
+          git merge --no-commit --no-ff --allow-unrelated-histories ${{ github.ref }}
 
           if [ $? -eq 0 ]; then
             # Commit the merge if successful
