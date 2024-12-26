@@ -10,13 +10,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-            fetch-depth: 0
+          fetch-depth: 0
       - name: Setup Git
         run: |
           git config user.name "Hoai Tran"
             git config user.email "hoai.nart.dev@gmail.com"
       - name: Attempt to merge release branch into main
         run: |
+          git fetch --no-tags --prune --depth=1 origin +refs/heads/main:refs/remotes/origin/main
           git checkout origin main
           git pull origin main
 
