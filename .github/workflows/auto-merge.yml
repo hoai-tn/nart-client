@@ -22,7 +22,7 @@ jobs:
         run: |
           git fetch --no-tags --prune --depth=1 origin
           ls -la
-          cat .github/workflows/auto-merge.yml
+          echo github.ref: ${{ github.ref }}
 
       - name: Checkout main branch
         run: |
