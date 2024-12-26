@@ -36,7 +36,7 @@ jobs:
         run: |
           git checkout main
           git pull origin main
-          if get merge --no-commit --no-ff ${{ github.ref }}; then
+          if git merge --no-commit --no-ff ${{ github.ref }}; then
             git commit -m "Merge branch ${{ github.ref }}"
           else
             echo "Merge conflicts detected. Please resolve them manually."
