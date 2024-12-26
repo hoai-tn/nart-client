@@ -14,5 +14,5 @@ test('displays message', () => {
   expect(wrapper.text()).toBeTruthy()
 
   // Assert the rendered text of the component
-  expect(wrapper.text()).toContain('Hello worldd')
+  expect(wrapper.text()).toContain('Hello world')
 })
