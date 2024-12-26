@@ -28,23 +28,19 @@ jobs:
         run: |
           git checkout main
 
-      - name: Attempt to merge release branch
+      - name: Attempt to merge release branch (handling unrelated histories)
         run: |
-          git merge ${{ github.ref }} # Allow unrelated histories for initial merge
+          git merge --no-ff --allow-unrelated-histories ${{ github.ref }}
+          MERGE_STATUS=$?
 
-          if [ $? -eq 0 ]; then
-              git commit -m "Merge branch ${{ github.ref }}"
-              git push origin main
-              echo "Merge successful."
-          elif [[ $? -eq 1 ]]; then
-              echo "Merge conflicts detected. Please resolve them manually and commit the changes."
-              # The workflow will stop here, requiring manual intervention.
-              exit 1
-          elif [[ $? -eq 128 ]]; then
-              echo "Unrelated histories detected. Please check the branch history and branching points."
-              exit 1
+          if [ $MERGE_STATUS -eq 0 ]; then
+            git commit -m "Merge branch ${{ github.ref }} (unrelated histories)"
+            git push origin main
+            echo "Merge successful (unrelated histories handled)."
+          elif [[ $MERGE_STATUS -eq 1 ]]; then
+            echo "Merge conflicts detected. Please resolve them manually and commit the changes."
+            exit 1
           else
-              echo "An unexpected error occurred during the merge (status: $?)."
-              exit 1
+            echo "An unexpected error occurred during the merge (status: $?)."
+            exit 1
           fi
-          echo "${{ job.status }}"
