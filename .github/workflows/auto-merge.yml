@@ -1,35 +1,37 @@
-name: AutoMerge
-'on':
+name: Merge Release Into Main
+
+on:
   push:
     branches:
-      - release/*
+      - 'release/*'
+
 jobs:
-  auto-merge:
+  main:
+    name: Create PR Release to Main
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Setup Git
-        run: |
-          git config user.name "Hoai Tran"
-            git config user.email "hoai.nart.dev@gmail.com"
-      - name: Attempt to merge release branch into main
-        run: |
-          git checkout origin main
-          git pull origin main
+      - name: git checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
 
-          # Attempt to merge the release branch into main
-          git merge --no-commit --no-ff ${{ github.ref }}
+      # https://github.com/marketplace/actions/github-pull-request-action
+      - name: create pull request
+        id: open-pr
+        uses: repo-sync/pull-request@v2
+        with:
+          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          destination_branch: ${{ github.event.repository.default_branch }}
+          pr_title: '[Automated] Merge ${{ github.ref_name }} into ${{ github.event.repository.default_branch }}'
+          pr_body: 'Automated Pull Request'
+          pr_reviewer: 'jessesquires'
+          pr_assignee: 'jessesquires'
 
-          if [ $? -eq 0 ]; then
-            # Commit the merge if successful
-            git commit -m "Merge branch ${{ github.ref }}"
-          else
-            echo "Merge conflicts detected. Please resolve them manually."
-            exit 1
-          fi
-      - name: Push change if merge was successful
-        if: success()
-        run: |
-          git push origin main
-          echo "${{ job.status }}"
+      # https://github.com/marketplace/actions/enable-pull-request-automerge
+      - name: enable automerge
+        if: steps.open-pr.outputs.pr_number != ''
+        uses: peter-evans/enable-pull-request-automerge@v2
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          pull-request-number: ${{ steps.open-pr.outputs.pr_number }}
+          merge-method: merge
