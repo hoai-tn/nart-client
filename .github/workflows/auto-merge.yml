@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Git (Optional)
         # You can remove this step if you already have Git configured locally
@@ -23,6 +21,8 @@ jobs:
       - name: Fetch updates (assuming remote is named 'origin')
         run: |
           git fetch --no-tags --prune --depth=1 origin
+          ls -la
+          cat .github/workflows/auto-merge.yml
 
       - name: Checkout main branch
         run: |
