@@ -48,4 +48,3 @@ jobs:
               exit 1
           fi
           echo "${{ job.status }}"
-s
