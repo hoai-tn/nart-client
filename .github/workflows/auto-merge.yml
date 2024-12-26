@@ -9,7 +9,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        sparse-checkout: .
+        with:
+            sparse-checkout: .
       - name: Setup Git
         run: |
           git config user.name "Hoai Tran"
