@@ -1,6 +1,5 @@
 <template>
   <div class="underline">hello</div>
-  <Button>Click me</Button>
   <Card>
     <CardHeader>
       <CardTitle>Card Title</CardTitle>

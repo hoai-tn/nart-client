@@ -30,7 +30,7 @@ jobs:
 
       - name: Attempt to merge release branch
         run: |
-          git merge --no-ff --allow-unrelated-histories ${{ github.ref }} # Allow unrelated histories for initial merge
+          git merge ${{ github.ref }} # Allow unrelated histories for initial merge
 
           if [ $? -eq 0 ]; then
               git commit -m "Merge branch ${{ github.ref }}"
