@@ -18,8 +18,15 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@nuxt/eslint',
     '@nuxt/test-utils/module',
+    '@pinia/nuxt',
   ],
   shadcn: {
     componentDir: 'app/components/ui',
   },
+  pinia: {
+    storesDirs: ['./app/stores/**'],
+  },
+  // imports: {
+  //   dirs: ["types/*.ts", "stores/*.ts", "types/**/*.ts"],
+  // },
 })
